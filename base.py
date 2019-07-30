@@ -12,6 +12,7 @@ settings.SCREENSHOT_PATH = Path(__file__).parent / 'screenshots'
 
 
 class LogoGenerator(mglw.WindowConfig):
+    title = "Logo Generator"
     window_size = (504, 504)
     aspect_ratio = 1.0  # Always retain a fixed 1.0 aspect ratio
     size = 24  # x/y resolution regardless of framebuffer size
