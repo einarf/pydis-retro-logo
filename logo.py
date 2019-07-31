@@ -15,25 +15,12 @@ class LogoVariant(LogoGenerator):
     write_frames = False
     frames = 64 + 16 + 16 + 16
 
-    def render_frame(self, time: float):
-        self.ctx.disable(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
-
-        # Render background
-        self.program_bg['texture0'].value = 0
-        self.texture_bg.use(location=0)
-        self.quad_fs.render(self.program_bg)
-
-        # Render logo
-        self.ctx.enable(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
-        m_model = matrix44.create_from_y_rotation(time)
-
-        self.logo_program['m_proj'].write(self.projection.tobytes())
-        self.logo_program['m_model'].write(m_model.astype('f4').tobytes())
-
-        if math.fmod(time - (math.pi * 0.25), math.pi * 2) < math.pi:
-            self.vao.render(self.logo_program)
-        else:
-            self.vao_controller.render(self.logo_program)
+    def init_states(self):
+        self.states = [
+            0, self.vao,
+            180, self.vao_controller
+        ]
+        super().init_states()
 
 
 if __name__ == '__main__':

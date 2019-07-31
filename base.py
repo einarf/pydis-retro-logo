@@ -1,3 +1,5 @@
+import bisect
+import math
 from pathlib import Path
 
 import numpy
@@ -18,10 +20,13 @@ class LogoGenerator(mglw.WindowConfig):
     window_size = (504, 504)
     aspect_ratio = 1.0  # Always retain a fixed 1.0 aspect ratio
     size = 24  # x/y resolution regardless of framebuffer size
+    speed = 6  # Rot speed in realtime preview
     resource_dir = Path(__file__).parent / 'resources'
     write_frames = True
     frames = 64
     frames_per_rotation = 32
+    # List of (int) rotation degrees, vao to render
+    states = []
 
     def __init__(self, **kwargs):
         # Ensure the frmebuffer has the exact pixel size.
@@ -63,16 +68,24 @@ class LogoGenerator(mglw.WindowConfig):
                 (254, 254, 255),
             ],
         )
+        self.init_states()
+
+    def init_states(self):
+        """Populate rotation states"""
+        self.event_values = self.states[::2]
+        self.event_vaos = self.states[1::2]
 
     def render(self, time: float, frame_time: float):
         """Main render function deciding if render to screen or files"""
         if self.write_frames:
-            time = 360 * (self.wnd.frames / self.frames_per_rotation)
+            time = math.pi * 2 * (self.wnd.frames / self.frames_per_rotation)
 
             # Rotation in degrees
             if self.wnd.frames >= frames:
                 self.wnd.close()
                 return
+        else:
+            time *= self.speed
 
         self.render_frame(time)
 
@@ -80,7 +93,27 @@ class LogoGenerator(mglw.WindowConfig):
             screenshot.create(self.wnd.fbo, name=f"logo_{str(self.wnd.frames).zfill(3)}.png")
 
     def render_frame(self, time):
-        pass
+        self.ctx.disable(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
+
+        # Render background
+        self.program_bg['texture0'].value = 0
+        self.texture_bg.use(location=0)
+        self.quad_fs.render(self.program_bg)
+
+        # Render logo
+        self.ctx.enable(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
+        time = time / 4
+        m_model = matrix44.create_from_y_rotation(time)
+
+        self.logo_program['m_proj'].write(self.projection.tobytes())
+        self.logo_program['m_model'].write(m_model.astype('f4').tobytes())
+
+        # Look up what vao to render
+        deg = time * 180 / math.pi
+        index = bisect.bisect_left(self.event_values, math.floor(deg)) - 1
+        index = max(0, min(index, len(self.event_vaos) - 1))
+
+        self.event_vaos[index].render(self.logo_program)
 
     def create_geometry(self, texture, include_colors=None, exclude_colors=None):
         """Create gemetry from texture.
