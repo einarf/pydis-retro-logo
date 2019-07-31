@@ -42,12 +42,16 @@ if __name__ == '__main__':
         if cls.filename == generator:
             generator_cls = cls
 
+    if generator_cls is None:
+        raise ValueError("No generator class '{}'. Available: {}".format(generator, [c.filename for c in GENERATORS]))
+
     generator_cls.write_frames = action == 'gen'
     # Use headless rendering when generating
-    if action == 'gen':
-        settings.WINDOW['class'] = 'moderngl_window.context.headless.Window'
 
     sys.argv = sys.argv[:1]
+    if action == 'gen':
+        sys.argv.extend(['-wnd', 'headless'])
+
     mglw.run_window_config(generator_cls)
 
 # window_size = (504, 504)
