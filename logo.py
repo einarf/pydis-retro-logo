@@ -13,14 +13,18 @@ from base import LogoGenerator
 
 class PlainLogo(LogoGenerator):
     window_size = (504, 504)
-    write_frames = False
-    frames = 64 + 16 + 16 + 16
     filename = 'logo_spin_plain'
+    speed = 1
 
     def init_states(self):
+        # angle, offset, vbo
         self.states = [
-            0,   self.vao,
-            180, self.vao_controller
+            0,   0,   self.logo_front,
+            90,  180, self.logo_back,
+            270, 0,   self.logo_front,
+            450, 180, self.logo_back,
+            630, 0,   self.logo_front,
+            720, 0,   self.logo_front,
         ]
         super().init_states()
 

@@ -19,7 +19,7 @@ class LogoGenerator(mglw.WindowConfig):
     samples = 0  # No multisampling enabled
     aspect_ratio = 1.0  # Always retain a fixed 1.0 aspect ratio
     size = 24  # x/y resolution regardless of framebuffer size
-    speed = 2  # Rot speed in realtime preview
+    speed = 1  # Rot speed in realtime preview
     resource_dir = Path(__file__).parent / 'resources'
     write_frames = False
     frames_per_rotation = 16
@@ -78,8 +78,9 @@ class LogoGenerator(mglw.WindowConfig):
 
     def init_states(self):
         """Populate rotation states"""
-        self.event_values = self.states[::2]
-        self.event_vaos = self.states[1::2]
+        self.event_values = self.states[::3]
+        self.event_offset = self.states[1::3]
+        self.event_vaos = self.states[2::3]
 
     def count_frames(self):
         """Count the number of frames in states"""
@@ -113,16 +114,16 @@ class LogoGenerator(mglw.WindowConfig):
 
         # Render logo
         self.ctx.enable(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
-        m_model = matrix44.create_from_y_rotation(time)
-
-        self.logo_program['m_proj'].write(self.projection.tobytes())
-        self.logo_program['m_model'].write(m_model.astype('f4').tobytes())
 
         # Look up what vao to render
         deg = time * 180 / math.pi
         index = bisect.bisect_left(self.event_values, math.floor(deg)) - 1
         index = max(0, min(index, len(self.event_vaos) - 1))
+        time += self.event_offset[index] * math.pi / 180
 
+        m_model = matrix44.create_from_y_rotation(time)
+        self.logo_program['m_proj'].write(self.projection.tobytes())
+        self.logo_program['m_model'].write(m_model.astype('f4').tobytes())
         self.event_vaos[index].render(self.logo_program)
 
     def create_geometry(self, texture, include_colors=None, exclude_colors=None):
