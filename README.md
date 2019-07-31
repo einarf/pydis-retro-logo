@@ -5,7 +5,7 @@ server using [ModernGL](https://github.com/moderngl/moderngl).
 
 ## Details
 
-We load 24 x 24 textures and covert each pixel into a cube. What pixel is made into
+We load 24 x 24 textures and convert each pixel into a cube. What pixel is made into
 a cube is filtered by a list of RGB color values. To make this work as simple as
 possible we only generate a color and cube position buffer and delegate the
 creation of cubes to a gemometry shader. The geometry shader takes a point
