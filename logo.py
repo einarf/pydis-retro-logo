@@ -46,6 +46,7 @@ if __name__ == '__main__':
     if generator_cls is None:
         raise ValueError("No generator class '{}'. Available: {}".format(generator, [c.filename for c in GENERATORS]))
 
+    # Configure generator / window
     generator_cls.write_frames = action == 'gen'
     generator_cls.window_size = (size, size)
     settings.SCREENSHOT_PATH = Path(__file__).parent / 'screenshots' / generator_cls.filename / str(size)
@@ -61,11 +62,14 @@ if __name__ == '__main__':
             for frame in settings.SCREENSHOT_PATH.iterdir():
                 frame.unlink()
 
+    # Run the window / generator
     mglw.run_window_config(generator_cls)
 
+    # Don't continue in view mode
     if action != "gen":
         exit(0)
 
+    # Output for final gif anim
     out_path = Path(__file__).parent / 'output' / generator_cls.filename
     out_path.mkdir(parents=True, exist_ok=True)
 
@@ -76,10 +80,3 @@ if __name__ == '__main__':
         settings.SCREENSHOT_PATH / 'logo_*.png',
         out_path / f"{generator_cls.filename}_{size}.gif",
     ])
-
-
-# window_size = (504, 504)
-# window_size = (252, 252)
-# window_size = (126, 126)
-# window_size = (24, 24)
-# window_size = (63, 63)
