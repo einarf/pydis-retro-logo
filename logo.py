@@ -1,27 +1,57 @@
 import math
+import sys
 from pathlib import Path
 
 import moderngl
 from pyrr import matrix44
 
 import moderngl_window as mglw
+from moderngl_window.conf import settings
 from base import LogoGenerator
 
 
-class Logo(LogoGenerator):
-    window_size = (504 / 2, 504 / 2)
-    # window_size = (252 / 2, 252 / 2)
-    # window_size = (24 / 2, 24 / 2)
+class PlainLogo(LogoGenerator):
+    window_size = (504, 504)
     write_frames = False
     frames = 64 + 16 + 16 + 16
+    filename = 'logo_spin_plain'
 
     def init_states(self):
         self.states = [
-            0, self.vao,
+            0,   self.vao,
             180, self.vao_controller
         ]
         super().init_states()
 
 
+GENERATORS = [
+     PlainLogo,
+]
+
+
 if __name__ == '__main__':
-    mglw.run_window_config(Logo)
+    # action: gen/view
+    # generator: filename attribute
+    # size: size of texture
+    action = sys.argv[1]
+    generator = sys.argv[2]
+    size = int(sys.argv[3])
+
+    generator_cls = None
+    for cls in GENERATORS:
+        if cls.filename == generator:
+            generator_cls = cls
+
+    generator_cls.write_frames = action == 'gen'
+    # Use headless rendering when generating
+    if action == 'gen':
+        settings.WINDOW['class'] = 'moderngl_window.context.headless.Window'
+
+    sys.argv = sys.argv[:1]
+    mglw.run_window_config(generator_cls)
+
+# window_size = (504, 504)
+# window_size = (252, 252)
+# window_size = (126, 126)
+# window_size = (24, 24)
+# window_size = (63, 63)
