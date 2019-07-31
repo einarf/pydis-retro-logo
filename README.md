@@ -8,7 +8,7 @@ server using [ModernGL](https://github.com/moderngl/moderngl).
 We load 24 x 24 textures and covert each pixel into a cube. What pixel is made into
 a cube is filtered by a list of RGB color values. To make this work as simple as
 possible we only generate a color and cube position buffer and delegate the
-cretion of cubes to a gemometry shader. The geometry shader takes a point
+creation of cubes to a gemometry shader. The geometry shader takes a point
 (cube center) and emits a cube around it as a 24 vertex triangle strip.
 
 We then render this geometry using orthographic projection
