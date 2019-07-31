@@ -1,5 +1,6 @@
 import math
 import sys
+import subprocess
 from pathlib import Path
 
 import moderngl
@@ -53,6 +54,22 @@ if __name__ == '__main__':
         sys.argv.extend(['-wnd', 'headless'])
 
     mglw.run_window_config(generator_cls)
+
+    if action != "gen":
+        exit(0)
+
+    in_path = settings.SCREENSHOT_PATH
+    out_path = Path(__file__).parent / 'output' / generator_cls.filename
+    out_path.mkdir(parents=True, exist_ok=True)
+
+    proc = subprocess.Popen([
+        'convert',
+        '-delay', '10',
+        '-loop', '1',
+        in_path / 'logo_*.png',
+        out_path / f"{generator_cls.filename}_{size}.gif",
+    ])
+
 
 # window_size = (504, 504)
 # window_size = (252, 252)
