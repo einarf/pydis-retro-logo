@@ -1,12 +1,14 @@
 from pathlib import Path
 
 import numpy
+from pyrr import matrix44
 
 import moderngl
 import moderngl_window as mglw
 from moderngl_window import screenshot
 from moderngl_window.conf import settings
 from moderngl_window.opengl.vao import VAO
+from moderngl_window import geometry
 
 settings.SCREENSHOT_PATH = Path(__file__).parent / 'screenshots'
 
@@ -19,7 +21,7 @@ class LogoGenerator(mglw.WindowConfig):
     resource_dir = Path(__file__).parent / 'resources'
     write_frames = True
     frames = 64
-    frames_per_rotation = 16
+    frames_per_rotation = 32
 
     def __init__(self, **kwargs):
         # Ensure the frmebuffer has the exact pixel size.
@@ -30,9 +32,44 @@ class LogoGenerator(mglw.WindowConfig):
         )
         super().__init__(**kwargs)
 
+        self.projection = matrix44.create_orthogonal_projection(-1, 1, -1, 1, 1, -1).astype('f4')
+
+        # Background
+        self.texture_bg = self.load_texture_2d('textures/python_bg.png')
+
+        # Geomtry Textures
+        self.texture_bg.filter = (moderngl.NEAREST, moderngl.NEAREST)
+        self.texture_logo_front = self.load_texture_2d('textures/geometry/logo_front.png')
+        self.texture_controller_front = self.load_texture_2d('textures/geometry/logo_controller.png')
+
+        # Programs
+        self.program_bg = self.load_program('programs/texture.glsl')
+        self.logo_program = self.load_program('programs/cube_geometry.glsl')
+
+        # VAOs
+        self.quad_fs = geometry.quad_fs()
+        self.vao_controller = self.create_geometry(
+            self.texture_controller_front,
+            exclude_colors=[
+                (32, 34, 37),
+                (143, 161, 255),
+            ],
+        )
+        self.vao = self.create_geometry(
+            self.texture_logo_front,
+            include_colors=[
+                (209, 216, 255),
+                (64, 81, 208),
+                (254, 254, 255),
+            ],
+        )
+
     def render(self, time: float, frame_time: float):
+        """Main render function deciding if render to screen or files"""
         if self.write_frames:
-            time = math.pi * (self.wnd.frames / frames_per_rotation)
+            time = 360 * (self.wnd.frames / self.frames_per_rotation)
+
+            # Rotation in degrees
             if self.wnd.frames >= frames:
                 self.wnd.close()
                 return
