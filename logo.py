@@ -8,7 +8,7 @@ import moderngl_window as mglw
 from base import LogoGenerator
 
 
-class LogoVariant(LogoGenerator):
+class Logo(LogoGenerator):
     window_size = (504 / 2, 504 / 2)
     # window_size = (252 / 2, 252 / 2)
     # window_size = (24 / 2, 24 / 2)
@@ -24,4 +24,4 @@ class LogoVariant(LogoGenerator):
 
 
 if __name__ == '__main__':
-    mglw.run_window_config(LogoVariant)
+    mglw.run_window_config(Logo)
