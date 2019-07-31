@@ -19,7 +19,7 @@ class LogoGenerator(mglw.WindowConfig):
     samples = 0  # No multisampling enabled
     aspect_ratio = 1.0  # Always retain a fixed 1.0 aspect ratio
     size = 24  # x/y resolution regardless of framebuffer size
-    speed = 6  # Rot speed in realtime preview
+    speed = 2  # Rot speed in realtime preview
     resource_dir = Path(__file__).parent / 'resources'
     write_frames = True
     frames = 64
@@ -99,7 +99,6 @@ class LogoGenerator(mglw.WindowConfig):
 
         # Render logo
         self.ctx.enable(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
-        time = time / 4
         m_model = matrix44.create_from_y_rotation(time)
 
         self.logo_program['m_proj'].write(self.projection.tobytes())
