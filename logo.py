@@ -57,8 +57,9 @@ if __name__ == '__main__':
 
     # Delete old frames
     if action == 'gen':
-        for frame in settings.SCREENSHOT_PATH.iterdir():
-            frame.unlink()
+        if settings.SCREENSHOT_PATH.exists():
+            for frame in settings.SCREENSHOT_PATH.iterdir():
+                frame.unlink()
 
     mglw.run_window_config(generator_cls)
 
