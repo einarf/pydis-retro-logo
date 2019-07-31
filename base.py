@@ -21,8 +21,7 @@ class LogoGenerator(mglw.WindowConfig):
     size = 24  # x/y resolution regardless of framebuffer size
     speed = 2  # Rot speed in realtime preview
     resource_dir = Path(__file__).parent / 'resources'
-    write_frames = True
-    frames = 64
+    write_frames = False
     frames_per_rotation = 16
     # List of (int) rotation degrees, vao to render
     states = []
@@ -41,6 +40,7 @@ class LogoGenerator(mglw.WindowConfig):
         # Geometry Textures
         self.texture_bg.filter = (moderngl.NEAREST, moderngl.NEAREST)
         self.texture_logo_front = self.load_texture_2d('textures/geometry/logo_front.png')
+        self.texture_logo_back = self.load_texture_2d('textures/geometry/logo_back.png')
         self.texture_controller_front = self.load_texture_2d('textures/geometry/logo_controller.png')
 
         # Programs
@@ -56,7 +56,7 @@ class LogoGenerator(mglw.WindowConfig):
                 (143, 161, 255),
             ],
         )
-        self.vao = self.create_geometry(
+        self.logo_front = self.create_geometry(
             self.texture_logo_front,
             include_colors=[
                 (209, 216, 255),
@@ -64,12 +64,27 @@ class LogoGenerator(mglw.WindowConfig):
                 (254, 254, 255),
             ],
         )
+        self.logo_back = self.create_geometry(
+            self.texture_logo_back,
+            include_colors=[
+                (209, 216, 255),
+                (64, 81, 208),
+                (254, 254, 255),
+            ],
+        )
+        
         self.init_states()
+        self.frames = self.count_frames()
 
     def init_states(self):
         """Populate rotation states"""
         self.event_values = self.states[::2]
         self.event_vaos = self.states[1::2]
+
+    def count_frames(self):
+        """Count the number of frames in states"""
+        last = max(self.event_values)
+        return int(last / 360 * self.frames_per_rotation)
 
     def render(self, time: float, frame_time: float):
         """Main render function deciding if render to screen or files"""
@@ -137,7 +152,7 @@ class LogoGenerator(mglw.WindowConfig):
                 row = (texture.height - 1 - y)
                 xpos = -1.0 + delta * x + half + xoffset
                 ypos = -1.0 + delta * row + half + yoffset
-                i = (row * texture.width + x) * 3
+                i = (row * texture.width + x) * texture.components
                 r, g, b = values[i:i + 3]
 
                 if include_colors:
