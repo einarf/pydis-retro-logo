@@ -3,6 +3,20 @@
 Generates animated retro-themed logos for the [Python Discord](https://pythondiscord.com/)
 server using [ModernGL](https://github.com/moderngl/moderngl).
 
+## Usage
+
+View animation (504 size)
+
+```bash
+python logo.py view logo_spin_plain 504
+```
+
+Render animation (504 size)
+
+```bash
+python logo.py gen logo_spin_plain 504
+```
+
 ## Details
 
 We load 24 x 24 textures and convert each pixel into a cube. What pixel is made into

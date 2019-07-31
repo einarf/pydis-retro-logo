@@ -22,7 +22,7 @@ class LogoGenerator(mglw.WindowConfig):
     speed = 1  # Rot speed in realtime preview
     resource_dir = Path(__file__).parent / 'resources'
     write_frames = False
-    end_frames = 10  # Append first frame N time to the end of the animation
+    end_frames = 5  # Append first frame N time to the end of the animation
     frames_per_rotation = 16
     # List of (int) rotation degrees, vao to render
     states = []

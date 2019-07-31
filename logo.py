@@ -19,12 +19,14 @@ class PlainLogo(LogoGenerator):
     def init_states(self):
         # angle, offset, vbo
         self.states = [
-            0,   0,   self.logo_front,
-            90,  180, self.logo_back,
-            270, 0,   self.logo_front,
-            450, 180, self.logo_back,
-            630, 0,   self.logo_front,
-            720, 0,   self.logo_front,
+            0,    0,   self.logo_front,
+            90,   180, self.logo_back,
+            270,  0,   self.logo_front,
+            450,  180, self.logo_back,
+            630,  0,   self.logo_front,
+            810,  180,   self.logo_back,
+            990,  0,   self.logo_front,
+            1080, 180,   self.logo_back,
         ]
         super().init_states()
 
@@ -35,9 +37,10 @@ GENERATORS = [
 
 
 if __name__ == '__main__':
-    # action: gen/view
-    # generator: filename attribute
-    # size: size of texture
+    # Arguments:
+    #   action (str): gen/view
+    #   generator (str): filename attribute
+    #   size (int): size of texture
     action = sys.argv[1]
     generator = sys.argv[2]
     size = int(sys.argv[3])
@@ -55,7 +58,7 @@ if __name__ == '__main__':
     generator_cls.window_size = (size, size)
     settings.SCREENSHOT_PATH = Path(__file__).parent / 'screenshots' / generator_cls.filename / str(size)
 
-    # Use headless rendering when generating
+    # Use headless rendering when generating. This is to avoid issues with pixel scaling (retina, gnome etc.)
     sys.argv = sys.argv[:1]
     if action == 'gen':
         sys.argv.extend(['-wnd', 'headless'])
