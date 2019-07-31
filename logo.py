@@ -47,8 +47,9 @@ if __name__ == '__main__':
         raise ValueError("No generator class '{}'. Available: {}".format(generator, [c.filename for c in GENERATORS]))
 
     generator_cls.write_frames = action == 'gen'
-    # Use headless rendering when generating
+    generator_cls.window_size = (size, size)
 
+    # Use headless rendering when generating
     sys.argv = sys.argv[:1]
     if action == 'gen':
         sys.argv.extend(['-wnd', 'headless'])
