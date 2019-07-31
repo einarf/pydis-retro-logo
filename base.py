@@ -27,14 +27,11 @@ class LogoGenerator(mglw.WindowConfig):
     frames_per_rotation = 32
     # List of (int) rotation degrees, vao to render
     states = []
+    filename = 'logo_'
 
     def __init__(self, **kwargs):
         # Ensure the frmebuffer has the exact pixel size.
         # Some window system are using subpixel scaling.
-        self.window_size = (
-            int(self.window_size[0] / kwargs['wnd'].pixel_ratio),
-            int(self.window_size[1] / kwargs['wnd'].pixel_ratio),
-        )
         super().__init__(**kwargs)
 
         self.projection = matrix44.create_orthogonal_projection(-1, 1, -1, 1, 1, -1).astype('f4')
@@ -42,7 +39,7 @@ class LogoGenerator(mglw.WindowConfig):
         # Background
         self.texture_bg = self.load_texture_2d('textures/python_bg.png')
 
-        # Geomtry Textures
+        # Geometry Textures
         self.texture_bg.filter = (moderngl.NEAREST, moderngl.NEAREST)
         self.texture_logo_front = self.load_texture_2d('textures/geometry/logo_front.png')
         self.texture_controller_front = self.load_texture_2d('textures/geometry/logo_controller.png')
@@ -81,7 +78,7 @@ class LogoGenerator(mglw.WindowConfig):
             time = math.pi * 2 * (self.wnd.frames / self.frames_per_rotation)
 
             # Rotation in degrees
-            if self.wnd.frames >= frames:
+            if self.wnd.frames >= self.frames:
                 self.wnd.close()
                 return
         else:
