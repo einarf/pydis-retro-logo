@@ -22,6 +22,7 @@ class LogoGenerator(mglw.WindowConfig):
     speed = 1  # Rot speed in realtime preview
     resource_dir = Path(__file__).parent / 'resources'
     write_frames = False
+    end_frames = 10  # Append first frame N time to the end of the animation
     frames_per_rotation = 16
     # List of (int) rotation degrees, vao to render
     states = []
@@ -102,7 +103,14 @@ class LogoGenerator(mglw.WindowConfig):
         self.render_frame(time)
 
         if self.write_frames:
-            screenshot.create(self.wnd.fbo, name=f"logo_{str(self.wnd.frames).zfill(3)}.png")
+            self.grab_frame(self.wnd.frames)
+            # Write the same frame to the end of the animation
+            if self.wnd.frames == 0:
+                for i in range(self.end_frames):
+                    self.grab_frame(self.frames + i)
+
+    def grab_frame(self, frame_number):
+        screenshot.create(self.wnd.fbo, name=f"logo_{str(frame_number).zfill(3)}.png")
 
     def render_frame(self, time):
         self.ctx.disable(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
