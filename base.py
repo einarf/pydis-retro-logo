@@ -32,7 +32,6 @@ class LogoGenerator(mglw.WindowConfig):
         # Ensure the frmebuffer has the exact pixel size.
         # Some window system are using subpixel scaling.
         super().__init__(**kwargs)
-        settings.SCREENSHOT_PATH = Path(__file__).parent / 'screenshots' / self.filename / str(self.window_size[0])
 
         self.projection = matrix44.create_orthogonal_projection(-1, 1, -1, 1, 1, -1).astype('f4')
 

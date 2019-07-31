@@ -48,18 +48,23 @@ if __name__ == '__main__':
 
     generator_cls.write_frames = action == 'gen'
     generator_cls.window_size = (size, size)
+    settings.SCREENSHOT_PATH = Path(__file__).parent / 'screenshots' / generator_cls.filename / str(size)
 
     # Use headless rendering when generating
     sys.argv = sys.argv[:1]
     if action == 'gen':
         sys.argv.extend(['-wnd', 'headless'])
 
+    # Delete old frames
+    if action == 'gen':
+        for frame in settings.SCREENSHOT_PATH.iterdir():
+            frame.unlink()
+
     mglw.run_window_config(generator_cls)
 
     if action != "gen":
         exit(0)
 
-    in_path = settings.SCREENSHOT_PATH
     out_path = Path(__file__).parent / 'output' / generator_cls.filename
     out_path.mkdir(parents=True, exist_ok=True)
 
@@ -67,7 +72,7 @@ if __name__ == '__main__':
         'convert',
         '-delay', '10',
         '-loop', '1',
-        in_path / 'logo_*.png',
+        settings.SCREENSHOT_PATH / 'logo_*.png',
         out_path / f"{generator_cls.filename}_{size}.gif",
     ])
 
