@@ -1,5 +1,13 @@
 # pydis-retro-logo
 
+<div align="center">
+
+[![preview](https://github.com/einarf/pydis-retro-logo/raw/master/output/logo_spin_plain/logo_spin_plain_252.gif
+)](#readme)
+
+</div>
+
+
 Generates animated retro-themed logos for the [Python Discord](https://pythondiscord.com/)
 server using [ModernGL](https://github.com/moderngl/moderngl).
 
