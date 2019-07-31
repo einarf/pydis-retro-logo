@@ -1,7 +1,7 @@
 # pydis-retro-logo
 
 Generates animated retro-themed logos for the [Python Discord](https://pythondiscord.com/)
-server.
+server using [ModernGL](https://github.com/moderngl/moderngl).
 
 ## Details
 
@@ -19,9 +19,9 @@ These png files are then converted into a gif anim using
 
 ## Dependecies
 
-https://github.com/moderngl/moderngl_window
-
-Clone and `pip install -e .` for now. The library does not exist on PyPI yet.
+* [moderngl_window](https://github.com/moderngl/moderngl_window)
+  (Clone and `pip install -e .` for now. The library does not exist on PyPI yet)
+* [imagemagick](https://imagemagick.org/) command line tools
 
 ## Attributions
 
