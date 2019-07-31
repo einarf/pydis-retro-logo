@@ -12,8 +12,6 @@ from moderngl_window.conf import settings
 from moderngl_window.opengl.vao import VAO
 from moderngl_window import geometry
 
-settings.SCREENSHOT_PATH = Path(__file__).parent / 'screenshots'
-
 
 class LogoGenerator(mglw.WindowConfig):
     title = "Logo Generator"
@@ -25,7 +23,7 @@ class LogoGenerator(mglw.WindowConfig):
     resource_dir = Path(__file__).parent / 'resources'
     write_frames = True
     frames = 64
-    frames_per_rotation = 32
+    frames_per_rotation = 16
     # List of (int) rotation degrees, vao to render
     states = []
     filename = 'logo_'
@@ -34,6 +32,7 @@ class LogoGenerator(mglw.WindowConfig):
         # Ensure the frmebuffer has the exact pixel size.
         # Some window system are using subpixel scaling.
         super().__init__(**kwargs)
+        settings.SCREENSHOT_PATH = Path(__file__).parent / 'screenshots' / self.filename / str(self.window_size[0])
 
         self.projection = matrix44.create_orthogonal_projection(-1, 1, -1, 1, 1, -1).astype('f4')
 
